@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
+    <script src="phonegap.js"></script>
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
+    <title>Page Title</title>
+    <style type="text/css">
+        p{
+            text-align: center;
+        }
+        address{
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        document.addEventListener("deviceready", function(){
+            //boton para obtener la foto
+            $('#foot').tap(function(){
+                navigator.device.capture.captureImage(function(mediaFiles){
+                    path = mediaFiles[0].fullPath;
+                    $('#fot').append('<br><img src="'+path+'" width="100%" />').attr('rel',path);
+                    },function(error){
+                        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+                        },{limit:1});
+                });
+            
+            //boton para obtener coordenadas
+            var botoncoordenadas = $("#obtenercord");
+               botoncoordenadas.tap(function(){
+                obtenerCoordenadas();
+               });
+            
+            }, false);
+        });
+    
+    function obtenerCoordenadas() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(obtenerCords, cordsError);
+        }else{
+            alert("Tu navegador no soporta o no tiene habilitado la 'Geolocalizacion'");
+        }
+    }
+    function obtenerCords(position) {
+        $("#obtLatitud").val(position.coords.latitude);
+        $("#obtLongitud").val(position.coords.longitude);
+    }
+    function cordsError(error) {
+        alert('codigo:'+error.cade+' mensaje'+error.message);
+    }
+    </script>
+</head>
+<body>
+    <div data-role="page" id="principal">
+        <div data-role="header">
+            <p>RESTAURANTES DE LIBRES</p>
+        </div>
+        <div data-role="content">
+            <ul>
+                <li><a href="#registro">Registrar</a></li>
+                <li><a href="#consultar">Consultar</a></li>
+                <li><a href="#modificar">Modificar</a></li>
+                <li><a href="#eliminar">Eliminar</a></li>
+            </ul>
+        </div>
+        <div data-role="footer">
+            <address>
+                &#169; Desarrollado por Grupo YEMMDA<br>
+                México, D. F. 55 40 13 24
+            </address>
+        </div>
+    </div>
+    
+    <div data-role="page" id="registro">
+        <div data-role="header">
+            <p>REGISTRO DE NEGOCIO</p>
+        </div>
+        <div data-role="content">
+            <input type="text" id="nom" placeholder="Inserte el nombre de negocio">
+            <input type="text" id="direc" placeholder="Direccion">
+            <input type="text" id="gir" placeholder="Giro">
+            <div id="fot"></div>
+            <input type="button" id="foot" value="TOMAR FOTO">
+            <div id="acce"> </div>
+            <input type="button" id="obtenercord" value="OBTENER COORDENADAS"/>
+            <input type="text" id="obtLatitud" placeholder="LATITUD"/>
+            <input type="text" id="obtLongitud" placeholder="LONGITUD"/>
+        </div>
+        <div data-role="footer">
+            <address>
+                &#169; Desarrollado por Grupo YEMMDA<br>
+                México, D. F. 55 40 13 24
+            </address>
+        </div>
+    </div>
+    
+    <div data-role="page" id="consultar">
+        <div data-role="header">
+            <p>CONSULTAR RESTAURANT</p>
+        </div>
+        <div data-role="content">
+            
+        </div>
+        <div data-role="footer">
+            <address>
+                &#169; Desarrollado por Grupo YEMMDA<br>
+                México, D. F. 55 40 13 24
+            </address>
+        </div>
+    </div>
+    
+    <div data-role="page" id="modificar">
+        <div data-role="header">
+            <p>MODIFICAR DATOS DE RESTAURANT</p>
+        </div>
+        <div data-role="content">
+            
+        </div>
+        <div data-role="footer">
+            <address>
+                &#169; Desarrollado por Grupo YEMMDA<br>
+                México, D. F. 55 40 13 24
+            </address>
+        </div>
+    </div>
+    
+    <div data-role="page" id="eliminar">
+        <div data-role="header">
+            <p>ELIMINAR RESTAURANT</p>
+        </div>
+        <div data-role="content">
+            <input type="text" id="Id_Elimi" placeholder="Ingrese el ID para eliminar el registro">
+        </div>
+        <div data-role="footer">
+            <address>
+                &#169; Desarrollado por Grupo YEMMDA<br>
+                México, D. F. 55 40 13 24
+            </address>
+        </div>
+    </div>
+    
+</body>
+</html>
