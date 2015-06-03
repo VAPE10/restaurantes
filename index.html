@@ -24,7 +24,7 @@
             $('#foot').tap(function(){
                 navigator.device.capture.captureImage(function(mediaFiles){
                     path = mediaFiles[0].fullPath;
-                    $('#fot').append('<br><img src="'+path+'" width="100%" />').attr('rel',path);
+                    $('#fot').append('<br><img id="imagen" src="'+path+'" width="100%" />').attr('rel',path);
                     },function(error){
                         navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
                         },{limit:1});
@@ -39,34 +39,71 @@
                //boton para guardar el regiistro
                var btnGuardar = $("#btnGuardar");
                btnGuardar.tap(function(){
-                var nomNego = $("#nom").val();
-                var direcc = $("#direc").val();
-                var giiroo = $("#gir").val();
-                //valor de la foto
-                var lati = $("#obtLatitud").val();
-                var long = $("#obtLongitud").val();
                 
-                alert(nomNego+" "+direcc+" "+giiroo+" "+lati+" "+long);
-                
+                if($("#imagen").attr("src")==""){
+                    alert("Tomar foto para registrar");
+                    }else{
+                        var nomNego = $("#nom").val();
+                        var direcc = $("#direc").val();
+                        var giiroo = $("#gir").val();
+                        var tel = $("#tel").val();
+                        //valor de la foto
+                        var lati = $("#obtLatitud").val();
+                        var long = $("#obtLongitud").val();
+                        
+                        
+                        $.ajax({
+                        type:"POST",
+                        url:"http://vape2.260mb.net/registrar.php",
+                        data:"Nombre="+nomNego+"&Direccion="+direcc+"&Giro="+giiroo+"&Telefono="+tel+"&Latitud="+lati+"&Longitud="+long,
+                        success: guardarNegocio
+                        });
+                        
+                        function guardarNegocio(datos) {
+                            alert(datos)
+                        }
+                        uploadPhoto($("#imagen").attr("src"));
+                    }
                 });
-            
+               
+               function uploadPhoto(foto) {
+                var options = new FileUploadOptions();
+                options.fileKey="file";
+                options.fileName=$("#nom").val();
+                options.mimeType="image/jpeg";
+                //alert("si entro a upload: "+options.fileName);
+                var params = {};
+                params.value1 = "test";
+                params.value2 = "param";
+                options.params = params;
+                
+                var ft = new FileTransfer();
+                ft.upload(foto,"http://itslmoviles.260mb.net/upload.php",function(r){
+                    navigator.notification.confirm("El archivo: "+r.response,null, "Notificacion");
+                    }, function(err){
+                        navigator.notification.alert("Error: "+err.code+" detalle: "+err.response,null, "Error de Envío");
+                        }, options);
+               }
+               
+               function obtenerCoordenadas() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(obtenerCords, cordsError);
+                    }else{
+                        alert("Tu navegador no soporta o no tiene habilitado la 'Geolocalizacion'");
+                        }
+                }
+                        
+                function obtenerCords(position) {
+                    $("#obtLatitud").val(position.coords.latitude);
+                    $("#obtLongitud").val(position.coords.longitude);
+                }
+                
+                function cordsError(error) {
+                    alert('codigo:'+error.cade+' mensaje'+error.message);
+                    }
+               
             }, false);
         });
-    
-    function obtenerCoordenadas() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(obtenerCords, cordsError);
-        }else{
-            alert("Tu navegador no soporta o no tiene habilitado la 'Geolocalizacion'");
-        }
-    }
-    function obtenerCords(position) {
-        $("#obtLatitud").val(position.coords.latitude);
-        $("#obtLongitud").val(position.coords.longitude);
-    }
-    function cordsError(error) {
-        alert('codigo:'+error.cade+' mensaje'+error.message);
-    }
     </script>
 </head>
 <body>
@@ -98,6 +135,7 @@
             <input type="text" id="nom" placeholder="Inserte el nombre de negocio">
             <input type="text" id="direc" placeholder="Direccion">
             <input type="text" id="gir" placeholder="Giro">
+            <input type="text" id="tel" placeholder="Telefono">
             <div id="fot"></div>
             <input type="button" id="foot" value="TOMAR FOTO">
             <div id="acce"> </div>
